@@ -1,0 +1,31 @@
+version: '2'
+services:
+  php-nginx-user:
+    image: registry.cn-qingdao.aliyuncs.com/applestudio/test:phpuser1101
+    stdin_open: true
+    tty: true
+    links:
+    - mysql-user
+    depends_on:
+    - mysql-user
+    restart: always
+    environment: 
+    - MYSQL_ROOT_PASSWORD=${mysql_root_password}
+  mysql-user:
+    image: registry.cn-qingdao.aliyuncs.com/applestudio/test:mysql1101
+    stdin_open: true
+    tty: true
+    ports:
+    - "${mysql_port}:3306"
+    restart: always
+    environment: 
+    - MYSQL_ROOT_PASSWORD=${mysql_root_password}
+    - PHP_USERNAME=${php_username}
+    - PHP_USER_PASSWORD=${php_user_password}
+    - PHP_USER_EMAIL=${php_user_email}
+    
+  php-lb:
+    image: rancher/lb-service-haproxy:v0.7.5
+    ports:
+      - ${public_port}:${public_port}
+  

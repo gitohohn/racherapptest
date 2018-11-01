@@ -1,0 +1,65 @@
+version: '2'
+catalog:
+  name: phpapp
+  version: 0.0.1
+  description: xxxxxxxxxxx
+  questions:
+    - variable: "public_port"
+      type: "int"
+      required: true
+      label: "php port"
+      description: "public port to access the PHP~~~"
+      default: 8006
+    - variable: "mysql_port"
+      type: "int"
+      required: true
+      label: "mysql port"
+      description: "mysql port expose to host~~~"
+      default: 3306
+    - variable: "mysql_root_password"
+      type: "string"
+      required: true
+      label: "mysql password"
+      description: "mysql root password~~~"
+      default: whu12345
+    - variable: "php_username"
+      type: "string"
+      required: true
+      label: "php username"
+      description: "user manage php username~~~"
+      default: phpuser
+    - variable: "php_user_password"
+      type: "string"
+      required: true
+      label: "php password"
+      description: "php password~~~"
+      default: 123
+    - variable: "php_user_email"
+      type: "string"
+      required: true
+      label: "php email"
+      description: "php email~~~"
+      default: 000@qq.com
+
+services:
+  php-nginx-fine:
+    scale: 1
+    start_on_create: true
+  mysql-fine:
+    scale: 1
+    start_on_create: true
+  php-lb:
+    scale: 1
+    lb_config:
+      certs: []
+      port_rules:
+      - protocol: http
+        service: php-nginx-user
+        source_port: ${public_port}
+        target_port: 80
+    health_check:
+      response_timeout: 2000
+      healthy_threshold: 2
+      interval: 2000
+      port: 42
+      unhealthy_threshold: 3
